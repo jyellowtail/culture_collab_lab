@@ -1,0 +1,65 @@
+---
+title: "Lab Code"
+author: "Julisa"
+date: "4/23/2020"
+output: html_document
+---
+
+This rmd will be shared with the lab. Please include any useful code you have found throughout your R journey. Make sure to annotate all code you include so we know how to best use it. Here is an example below... 
+
+
+First lets start with loading in necessary packages. Feel free to include packages you use and include notes on what it is for
+```{r Pacakges}
+
+# install.packages(c("tidyverse", "dplyr")
+
+library(tidyverse) # this is a helpful package for tidying data, this allows us to use the piping function %>% you'll see being used below
+library(dplyr) # While this package is used for many things, I am using it for the mutate function which allows you to add new variables to your data set AND the case_when function which is basically like an if/then function but allows you to use multiple columns 
+
+```
+
+
+Reading in data 
+```{r Read data}
+data <- read.csv("C:/Users/Julisa/Documents/RFBF/RFBF.repo/Data/File.csv", header = T, sep = ",", na=-99, stringsAsFactors = FALSE) # Laura and Ari shared this code with me to read in my csv files that I exported from Qualtrics. This is a step in tidying your data because you cannot run analysis directly from the raw data that Qualtrics exports. 
+
+data <- data()[-c(1:2), ]  # Getting rid of unneccesary rows that Qualtrics exports. The first two rows are usually character values so you need to delete them so all of your cases are numeric. 
+
+data <- data %>% retype() # Nadia shared this code with me. This is so all of your cases are transformed to simple classes that only include data, numeric or character. This way empty cases will be replaced with NA.
+```
+
+Creating Race variable
+```{r Race Variable}
+# If you use the same demographic variable we use for Race in qualtrics, this code will be helpful 
+
+# First you need to change the NAs to 0 for each of the Race columns
+data$Race_1[is.na(data$Race_1)] <- 0
+data$Race_2[is.na(data$Race_2)] <- 0
+data$Race_3[is.na(data$Race_3)] <- 0
+data$Race_4[is.na(data$Race_4)] <- 0
+data$Race_5[is.na(data$Race_5)] <- 0
+data$Race_6[is.na(data$Race_6)] <- 0
+data$Race_7[is.na(data$Race_7)] <- 0
+
+# Then you use the mutate and case_When function to create a new column labeled Race
+data <- data %>% mutate(Race = case_when(
+                    Race_1 == 1 & Race_2 == 0 & Race_3 == 0 & Race_4 == 0 & Race_5 == 0 & Race_6 == 0 & Race_7 == 0 ~ "1",
+                    Race_1 == 0 & Race_2 == 1 & Race_3 == 0 & Race_4 == 0 & Race_5 == 0 & Race_6 == 0 & Race_7 == 0 ~ "2",
+                    Race_1 == 0 & Race_2 == 0 & Race_3 == 1 & Race_4 == 0 & Race_5 == 0 & Race_6 == 0 & Race_7 == 0 ~ "3",
+                    Race_1 == 0 & Race_2 == 0 & Race_3 == 0 & Race_4 == 1 & Race_5 == 0 & Race_6 == 0 & Race_7 == 0 ~ "4",
+                    Race_1 == 0 & Race_2 == 0 & Race_3 == 0 & Race_4 == 0 & Race_5 == 1 & Race_6 == 0 & Race_7 == 0 ~ "5",
+                    Race_1 == 0 & Race_2 == 0 & Race_3 == 0 & Race_4 == 0 & Race_5 == 0 & Race_6 == 1 & Race_7 == 0 ~ "6",
+                    Race_1 == 0 & Race_2 == 0 & Race_3 == 0 & Race_4 == 0 & Race_5 == 0 & Race_6 == 0 & Race_7 == 1 ~ "7"))
+
+# Here is how you can filter your data by Race
+data <- data %>% filter(Race == 3) 
+
+```
+
+Filter out not finished surveys
+```{r Not finished surveys}
+# Here is how you can filter out all surveys that are not completed by using the V10 variable in your data set from Quatlrics. V10 is the variable that tracks whether particiants Finished = 1, or did NOT Finish = 0
+
+data <- data %>% filter(V10 == 1)
+```
+
