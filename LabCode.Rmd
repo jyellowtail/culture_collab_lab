@@ -63,3 +63,10 @@ Filter out not finished surveys
 data <- data %>% filter(V10 == 1)
 ```
 
+## Link to Mediation Model Power Analysis Calculator in Code Below
+```{r Power Analysis Calculator}
+# runGitHub("mc_power_med", "schoam4") 
+# this code takes you to site for power analysis calculator
+
+# here is link - https://schoemanna.shinyapps.io/mc_power_med/
+```
